@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Todo } from 'src/app/models/Todo';
+import { Todo } from 'src/app/models/todo';
+import { TodoService } from 'src/app/services/todo.service';
 
 @Component({
   selector: 'app-read-all',
@@ -8,23 +9,29 @@ import { Todo } from 'src/app/models/Todo';
 })
 export class ReadAllComponent implements OnInit {
 
-  list: Todo[] = [
-    {
-      titulo: "teste",
-      dataParaFinalizar: new Date,
-      finalizado: false 
-    },
-    {
-      titulo: "teste2",
-      dataParaFinalizar: new Date,
-      finalizado: false 
-    }
-  ]
+  closed = 0;
 
-  constructor() {}
+  list: Todo[] = [];
+
+  constructor(private service: TodoService) {}
   
   ngOnInit(): void {
-    throw new Error('Method not implemented.');
+    this.findAll();
+  }
+
+  findAll(): void {
+    this.service.findAll().subscribe((resposta) => {
+      this.list = resposta;
+      this.countClosed();
+    })
+  }
+
+  countClosed(): void {
+    for (let todo of this.list) {
+      if(todo.finalizado) {
+        this.closed++;
+      }
+    }
   }
 
 }
